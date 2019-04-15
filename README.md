@@ -2,7 +2,7 @@
 
 # DMN Testing Utility
 
-A simple yet effective command line utility for creating test scenario's for DMN models.
+A simple, yet effective command line utility for creating test scenario's for DMN models.
 
 ## Status
 
@@ -19,7 +19,7 @@ Under construction, do not use for production purposes.
 
 ## Workings
 
-To get you started, the following will describe a way of working with the command line utlity in your project.
+To get you started, the following will describe a way of working with the command line utility in your project.
 
 ### Usage, best practices
 
