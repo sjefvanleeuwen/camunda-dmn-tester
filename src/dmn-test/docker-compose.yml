@@ -1,0 +1,17 @@
+version: '3.4'
+
+x-logging:
+  &default-logging
+  options:
+    max-size: "10m"
+    max-file: "5"
+  driver: json-file
+
+services:
+  api:
+    image: wigo4it/dmn-test
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    hostname: dmn-test
+    logging: *default-logging
