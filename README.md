@@ -1,4 +1,4 @@
-![alt text](./images/dmn-logo.png "Logo Title Text 1")
+![alt text](./images/dmn-logo.png "dmn")
 
 # DMN Testing Utility
 
@@ -21,6 +21,10 @@ Under construction, do not use for production purposes.
 
 To get you started, the following will describe a way of working with the command line utility in your project.
 
+### What is DMN
+
+For more information on DMN please visit: https://en.wikipedia.org/wiki/Decision_Model_and_Notation
+
 ### Usage, best practices
 
 #### DMN Modelling
@@ -29,6 +33,10 @@ An analist/developer typically models a decision model using DMN tools, such as 
 
 * The Camunda Modeler (Desktop)
 * The Camunda Dmn Simulator (Web)
+
+Here's a graphical example of a decision model:
+
+![alt text](./images/dmn-notation.png "dmn notation")
 
 #### Storing DMN for execution
 
