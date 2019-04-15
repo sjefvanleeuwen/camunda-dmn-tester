@@ -15,4 +15,4 @@ RUN dotnet publish --no-restore --no-build -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "dmn-test.dll", "-c", "Release", "--no-build"]
+ENTRYPOINT ["dotnet", "dmn-test.dll"]
