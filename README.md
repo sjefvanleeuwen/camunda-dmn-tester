@@ -49,8 +49,10 @@ The commandline utility is able to discover all the DMN models that are stored i
 i.e:
 
 ```bash
-foo@bar:dmn-test -e http://localhost:8080/engine-rest
+foo@bar:docker run --rm=true --name dmn-test -v /home/$USER:/tmp wigo4it/dmn-test -o create -k invoiceClassification -e http://192.168.178.50:8080/engine-rest -m /tmp/testtemplate.md
 ```
+
+Here's the output of that command in [testtemplate.md](src/dmn-test/testtemplate.md)
 
 This utility will discover all the input / output paramters of your models and create empty test stubs for you in the form of markdown tables, which you can then fill in with test data. These markdown files are easily used in your own source code projects.
 
