@@ -87,7 +87,9 @@ The last column '!' contains the test results.
 | 10000          | "Misc"           | "exceptional"                    |&#x1F49A;|
 ##### actual visualization in markdown
 
+### Example of a session
 
+[![youtube](https://img.youtube.com/vi/oncusmZtPuM/0.jpg)](https://www.youtube.com/watch?v=oncusmZtPuM)
 
 ### DMN Interpretation and execution
 
