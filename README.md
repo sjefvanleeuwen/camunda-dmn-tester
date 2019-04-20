@@ -89,7 +89,7 @@ The last column '!' contains the test results.
 
 ### Example of a session
 
-[![youtube](https://img.youtube.com/vi/oncusmZtPuM/0.jpg)](https://www.youtube.com/watch?v=oncusmZtPuM)
+[![youtube](./images/test-session.png)](https://www.youtube.com/watch?v=oncusmZtPuM)
 
 ### DMN Interpretation and execution
 
