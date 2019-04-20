@@ -29,7 +29,7 @@ namespace dmn_test
     }
     class Options
     {
-        [Option('o', "operation", Required = false, HelpText = "Operation. 'create' for create test table for decision model.")]
+        [Option('o', "operation", Required = true, HelpText = "Operation. 'create' for create test table for decision model.")]
         public string operation {get;set;}
         [Option('k', "key", Required = false, HelpText = "Key of the decision model top operate on.")]
         public string dmnKey {get;set;}
