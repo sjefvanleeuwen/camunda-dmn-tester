@@ -33,7 +33,10 @@ namespace dmn_test
         public async Task<DmnResult> Evaluate(string key, DmnRequest request)
         {
             var stringTask = client.PostAsync($"{restApiEndpoint}/decision-definition/key/{key}/evaluate",
-            new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"));
+            new StringContent(JsonConvert.SerializeObject(request,Newtonsoft.Json.Formatting.None, 
+                                    new JsonSerializerSettings { 
+                                        NullValueHandling = NullValueHandling.Ignore}
+                                    ), Encoding.UTF8, "application/json"));
             var msg = await stringTask;
             var content = await msg.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<DmnResult>(content);

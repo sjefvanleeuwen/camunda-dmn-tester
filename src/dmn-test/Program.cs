@@ -27,7 +27,6 @@ namespace dmn_test
         public string Key { get; set; }
         public List<DmnRequest> Requests = new List<DmnRequest>();
     }
-
     class Options
     {
         [Option('o', "operation", Required = false, HelpText = "Operation. 'create' for create test table for decision model.")]
@@ -43,6 +42,10 @@ namespace dmn_test
 
     class Program
     {
+        public const string Untested = "&#x1F538;";
+        public const string Success = "&#x1F49A;";
+        public const string Failed = "&#x1F534;";
+
         static string getSampleForType(string typeRef){
             switch (typeRef){
                 case "double":
@@ -68,40 +71,115 @@ namespace dmn_test
                     seperator.Append("|-");
                     columns.Append("| ");
                 }
-                header.Append(input.Label + " |");
-                seperator.Append("".PadRight(input.Label.Length, '-') + "-|");
-                columns.Append(getSampleForType(input.InputExpression.TypeRef).PadRight(input.Label.Length, ' ') + " |");
+                header.Append(input.InputExpression.Text   + " |");
+                seperator.Append("".PadRight(input.InputExpression.Text.Length, '-') + "-|");
+                columns.Append(getSampleForType(input.InputExpression.TypeRef).PadRight(input.InputExpression.Text.Length, ' ') + " |");
             }
             foreach (var input in table.Outputs)
             {
-                header.Append("*" + input.Label + " |");
-                seperator.Append("-".PadRight(input.Label.Length + 1, '-') + "-|");
-                columns.Append(getSampleForType(input.TypeRef).PadRight(input.Label.Length + 1, ' ') + " |");
+                header.Append("*" + input.Name + " |");
+                seperator.Append("-".PadRight(input.Name.Length + 1, '-') + "-|");
+                columns.Append(getSampleForType(input.TypeRef).PadRight(input.Name.Length + 1, ' ') + " |");
             }
             header.Append(" ! |");
             seperator.Append(":-:|");
             columns.Append("&#x1F538;|");
-            return $"## dmn:{key}\n" + header.ToString() + "\n" + seperator.ToString() + "\n" + columns + "\n";
+            return $"## dmn:{table.Id}\n" + header.ToString() + "\n" + seperator.ToString() + "\n" + columns + "\n" + "#### last run: never\n";
         }
 
         static void Main(string[] args)
         {
-            Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o=>{
+            DmnClient client = null;
+            Parser.Default.ParseArguments<Options>(args).WithParsed(o=>{
                 switch (o.operation)
                 {
                     case "create":
-                        var client = new DmnClient(o.Endpoint);
+                        client = new DmnClient(o.Endpoint);
                         var res = client.GetDefinition(o.dmnKey).Result;
                         var def = DmnParser.ParseString(res.DmnXml);
                         System.IO.File.WriteAllText(o.Markdown, "# Decisions\n");                        
                         foreach (var decision in def.Decisions){
-                            var table = createMarkdownTable(decision.Name,decision.DecisionTable);
+                            var table = createMarkdownTable(decision.Name, decision.DecisionTable);
                             System.IO.File.AppendAllText(o.Markdown, table + "\n");                        
                         }
+                        break;
+                    case "test":
+                        client = new DmnClient(o.Endpoint);
+                        var md = System.IO.File.ReadAllLines(o.Markdown);
+                        var mode1 = 0;
+                        var s = 0;
+                        var e = 0;
+                        var table1 = "";
+                        IEnumerable<string> columns=null;
+                        IEnumerable<string> values=null;
+
+                        for (int i=0;i<md.Length;i++)
+                        {
+                            switch (mode1)
+                            {
+                                case 0: // look for start table tag
+                                    if (md[i].StartsWith("## dmn:")){
+                                        table1 = md[i].Substring(7);
+                                        mode1=1;
+                                        //i++;                                    
+                                    }
+                                    break;
+                                case 1: // extract columns
+                                    columns  = md[i].Split('|',StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).AsEnumerable();
+                                    i = i + 1; // skip header seperator
+                                    mode1=2;
+                                    break;
+                                case 2: // perform test
+                                    if (!md[i].Trim().StartsWith("|")){
+                                        mode1=0; // EOT
+                                        md[i] = "#### last run: " + DateTime.Now;
+                                        break;
+                                    }
+                                    values  = md[i].Split('|',StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Select(y=>y.TrimEnd('"')).Select(z=>z.TrimStart('"')).AsEnumerable();
+                                    var req = new DmnRequest();
+                                    req.Variables = new Dictionary<string, Variable>();
+                                    for (int k=0;k<columns.Count()-1;k++)
+                                    {
+                                        if (columns.ElementAt(k).StartsWith('*'))
+                                            continue;
+                                        req.Variables.Add(
+                                            columns.ElementAt(k),
+                                            new Variable()
+                                            {
+                                                Value=values.ElementAt(k)
+                                            }
+                                        );
+                                    };
+                                    var json = JsonConvert.SerializeObject(
+                                        req,Newtonsoft.Json.Formatting.None, 
+                                    new JsonSerializerSettings { 
+                                        NullValueHandling = NullValueHandling.Ignore
+                                    });
+                                    var result = client.Evaluate(table1,req).Result;
+                                    for(int p=0;p<result.Count();p++){
+                                      var m=result[p];
+                                      var index = columns.TakeWhile(x => x != "*" + m.Keys.First().ToString()).Count();
+                                      var expected = values.ElementAt(index);
+                                      var testResult = (expected == m[m.Keys.First().ToString()].Value.ToString());
+                                      if (testResult){
+                                          md[i] = md[i].Replace(Failed,Success);
+                                          md[i] = md[i].Replace(Untested,Success);
+                                      }
+                                      else
+                                      {
+                                          md[i] = md[i].Replace(Success,Failed);
+                                          md[i] = md[i].Replace(Untested,Failed);
+                                          break;                                        
+                                      }
+                                    }
+                                    break;
+                            }
+                        }
+                    // write back the testfile.
+                    System.IO.File.WriteAllLines(o.Markdown,md);
                     break;
                 }
                 return;
-
             int mode = 0;
             List<DmnTestCase> cases = new List<DmnTestCase>();
             DmnTestCase current = new DmnTestCase();
@@ -115,7 +193,7 @@ namespace dmn_test
                 switch (mode)
                 {
                     case 0: // searching for test scenario
-                        Console.Write("Searching for test scenario... ");
+                            Console.Write("Searching for test scenario... ");
                         if (i + 7 > text.Length)
                         {
                             mode = 4;
@@ -127,7 +205,7 @@ namespace dmn_test
                             i = text.IndexOf('\n', j);
                             mode = 1;
                             key = text.Substring(j, i - j);
-                            Console.Write($"found scenario {key} ");
+                                Console.Write($"found scenario {key} ");
                         }
                         current.Key = key;
                         break;

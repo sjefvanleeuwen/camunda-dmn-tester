@@ -1,11 +1,11 @@
 # Decisions
-## dmn:Invoice Classification
-| Invoice Amount |Invoice Category |*Classification | ! |
-|----------------|-----------------|----------------|:-:|
-| 100.0          |"Text"           |"Text"          |&#x1F538;|
+## dmn:invoice-assign-approver
+| amount |invoiceCategory |*invoiceClassification | ! |
+|--------|----------------|-----------------------|:-:|
+| 100.0  |"Text"          |"Text"                 |&#x1F538;|
 
-## dmn:Assign Approver Group
-| Invoice Classification |*Approver Group | ! |
-|------------------------|----------------|:-:|
-| "Text"                 |"Text"          |&#x1F538;|
+## dmn:DecisionTable_16o85h8
+| invoiceClassification |*result | ! |
+|-----------------------|--------|:-:|
+| "Text"                |"Text"  |&#x1F538;|
 
