@@ -86,7 +86,7 @@ The commandline utility is able to discover all the DMN models that are stored i
 i.e:
 
 ```bash
-foo@bar:docker run --rm=true --name dmn-test -v /home/$USER:/tmp wigo4it/dmn-test -o create -k invoiceClassification -e http://192.168.178.50:8080/engine-rest -m /tmp/testtemplate.md
+foo@bar:docker run --rm=true --name dmn-test -v ${PWD}:/dmn-test wigo4it/dmn-test -o create -k invoiceClassification -e http://localhost:8081/engine-rest -m /dmn-test/testtemplate.md
 ```
 
 Here's the output of that command in [testtemplate.md](src/dmn-test/testtemplate.md)
@@ -121,7 +121,7 @@ The last column '!' contains the test results.
 i.e:
 
 ```bash
-foo@bar:docker run --rm=true --name dmn-test -v /home/$USER:/tmp wigo4it/dmn-test -o test -k invoiceClassification -e http://192.168.178.50:8080/engine-rest -m /tmp/testtemplate.md
+foo@bar:docker run --rm=true --name dmn-test -v ${PWD}:/dmn-test wigo4it/dmn-test -o test -k invoiceClassification -e http://localhost:8081/engine-rest -m /dmn-test/testtemplate.md
 ```
 
 ### Example of a session
