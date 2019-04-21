@@ -84,7 +84,7 @@ namespace dmn_test
             header.Append(" ! |");
             seperator.Append(":-:|");
             columns.Append("&#x1F538;|");
-            return $"## dmn:{table.Id}\n" + header.ToString() + "\n" + seperator.ToString() + "\n" + columns + "\n" + "#### last run: never\n";
+            return $"## dmn:{key}\n" + header.ToString() + "\n" + seperator.ToString() + "\n" + columns + "\n" + "#### last run: never\n";
         }
 
         static void Main(string[] args)
@@ -99,7 +99,7 @@ namespace dmn_test
                         var def = DmnParser.ParseString(res.DmnXml);
                         System.IO.File.WriteAllText(o.Markdown, "# Decisions\n");                        
                         foreach (var decision in def.Decisions){
-                            var table = createMarkdownTable(decision.Name, decision.DecisionTable);
+                            var table = createMarkdownTable(decision.Id, decision.DecisionTable);
                             System.IO.File.AppendAllText(o.Markdown, table + "\n");                        
                         }
                         break;
