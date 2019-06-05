@@ -47,8 +47,8 @@ To get you started, the following will describe a way of working with the comman
 
 An analist/developer typically models a decision model using DMN tools, such as available from:
 
-* The Camunda Modeler (Desktop)
-* The Camunda Dmn Simulator (Web)
+* The Camunda Modeler (Desktop) https://camunda.com/download/modeler/
+* The Camunda Dmn Simulator (Web based) https://camunda.com/dmn/simulator/
 
 Here's a graphical example of a decision model:
 
@@ -124,7 +124,7 @@ i.e:
 foo@bar:docker run --rm=true --name dmn-test -v ${PWD}:/dmn-test wigo4it/dmn-test -o test -k invoiceClassification -e http://localhost:8081/engine-rest -m /dmn-test/testtemplate.md
 ```
 
-### Example of a session
+### Example of a session (YOUTUBE VIDEO)
 
 [![youtube](./images/test-session.png)](https://www.youtube.com/watch?v=oncusmZtPuM)
 
